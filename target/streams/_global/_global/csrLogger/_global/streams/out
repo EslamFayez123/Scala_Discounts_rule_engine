@@ -1,0 +1,14 @@
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.10/logback-classic-1.2.10.pom
+[debug] downloaded https://repo1.maven.org/maven2/com/typesafe/scala-logging/scala-logging_2.13/3.9.4/scala-logging_2.13-3.9.4.pom
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-parent/1.2.10/logback-parent-1.2.10.pom
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.10/logback-core-1.2.10.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/slf4j/slf4j-parent/1.7.32/slf4j-parent-1.7.32.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar
+[debug] downloaded https://repo1.maven.org/maven2/com/typesafe/scala-logging/scala-logging_2.13/3.9.4/scala-logging_2.13-3.9.4.jar
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.10/logback-classic-1.2.10.jar
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.10/logback-core-1.2.10.jar
+[debug] downloaded https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32-sources.jar
+[debug] downloaded https://repo1.maven.org/maven2/com/typesafe/scala-logging/scala-logging_2.13/3.9.4/scala-logging_2.13-3.9.4-sources.jar
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.10/logback-core-1.2.10-sources.jar
+[debug] downloaded https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.10/logback-classic-1.2.10-sources.jar
