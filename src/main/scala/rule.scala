@@ -202,13 +202,13 @@ object rule extends App {
 
 
   def connectToDatabase(url: String, username: String, password: String): Connection = {
-    Class.forName("oracle.jdbc.driver.OracleDriver") // Load Oracle JDBC driver class
-    DriverManager.getConnection(url, username, password) // Create connection
+    Class.forName("oracle.jdbc.driver.OracleDriver")
+    DriverManager.getConnection(url, username, password)
   }
 
 
   def insertData(connection: Connection, discount: Float, finalPrice: Float): Unit = {
-    val query = "INSERT INTO discount (discount, finalprice) VALUES (?, ?)" // Replace with your table name
+    val query = "INSERT INTO discount (discount, finalprice) VALUES (?, ?)"
     val preparedStatement: PreparedStatement = connection.prepareStatement(query)
     preparedStatement.setFloat(1, discount)
     preparedStatement.setFloat(2, finalPrice)
