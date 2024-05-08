@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter
 import scala.io.{BufferedSource, Source}
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
+import java.sql.{Connection, DriverManager, PreparedStatement}
+
 
 
 
@@ -28,8 +30,6 @@ object rule extends App {
     }
   }
 
-  def avg_discount(orderslist: List[String]): Float = {
-    try {
       def rule1(startdate: String, enddate: String): Int = {
         try {
           val format = new SimpleDateFormat("yyyy-MM-dd")
@@ -114,67 +114,74 @@ object rule extends App {
             0
         }
       }
-      def rule6(payment:String):Int = {
-        try {
-          if (payment.toLowerCase == "visa") {
-            logExecution("rule5: Processed and inserted to the result", success = true)
-            5
-          } else {
-            logExecution("rule5: not qualified", success = true)
-            0
-          }
 
-        } catch {
-          case ex: Exception =>
-            logExecution("rule6: Failed "+ ex.getMessage, success = false)
-            0
-        }
-      }
       def rule5(quantity: String, payment_method: String): Int = {
         try {
           if (payment_method.toLowerCase.trim == "app") {
-            logExecution("rule6: Processed and inserted to the result", success = true)
+            logExecution("rule5: Processed and inserted to the result", success = true)
             return (math.ceil(quantity.toDouble / 5) * 5.0).toInt
           } else {
-            logExecution("rule6: not qualified", success = true)
+            logExecution("rule5: not qualified", success = true)
             return 0
           }
 
         } catch {
           case ex: Exception =>
-            logExecution("rule6: Failed "+ ex.getMessage, success = false)
+            logExecution("rule5: Failed " + ex.getMessage, success = false)
             0
         }
+      }
+        def rule6(payment:String):Int = {
+          try {
+            if (payment.toLowerCase.trim == "visa") {
+              logExecution("rule6: Processed and inserted to the result", success = true)
+              5
+            } else {
+              logExecution("rule6: not qualified", success = true)
+              0
+            }
+
+          } catch {
+            case ex: Exception =>
+              logExecution("rule6: Failed "+ ex.getMessage, success = false)
+              0
+          }
         }
 
 
-      val Field1 = orderslist(0)
-      val field2 = orderslist(1)
-      val field3 = orderslist(2)
-      val field4 = orderslist(3)
-      val field6 = orderslist(5)
-      val field7 = orderslist(6)
-      val discountedlist = List(rule1(Field1, field3), rule2(field2), rule3(Field1, "23-3-2023"), rule4(field4),rule5(field3,field6),rule6(field7))
-      val avg_discount = if (discountedlist.size >= 2) discountedlist.sorted.reverse.take(2).sum / 2.toFloat
-      else if (discountedlist.size == 1) discountedlist.head
-      else 0
 
-      avg_discount
-    } catch {
+
+
+
+  def avg_discount(ordersList: List[String]): Float = {
+    try{
+    val discountedValues = List(
+      rule1(ordersList(0), ordersList(2)),
+      rule2(ordersList(1)),
+      rule3(ordersList(0), "23-3-2023"),
+      rule4(ordersList(3)),
+      rule5(ordersList(3), ordersList(5)),
+      rule6(ordersList(6))
+    )
+    val avg_discount = if (discountedValues.size >= 2) discountedValues.sorted.reverse.take(2).sum / 2.toFloat
+    else if (discountedValues.size == 1) discountedValues.head
+    else 0
+    avg_discount
+    }catch {
       case ex: Exception =>
-        logExecution("Error in avg_discount function: " + ex.getMessage, success = false)
+        logExecution("Average_function: Failed " + ex.getMessage, success = false)
         0
-    }
-  }
+    }}
 
-  def applydiscount(orderslist:List[String] ,avg_discount:List[String] => Float): List[Float] = {
+
+    def applydiscount(orderslist:List[String] ,avg_discount:List[String] => Float): List[Float] = {
     val discount = avg_discount(orderslist)
     val price = orderslist(4).toFloat * orderslist(3).toFloat
     val final_price = (price * (100-discount))/100
     List(discount,final_price)
   }
   // Process each line
-  val finalList: List[List[Float]] = lines.map { line =>
+  val finalList = lines.map { line =>
     val fields = line.split(",").toList
     applydiscount(fields, avg_discount)
   }
@@ -187,5 +194,35 @@ object rule extends App {
   }
 
   writer.close()
-}
+  val url = "jdbc:oracle:thin:@//localhost:1521/XE"
+  val driver = "oracle.jdbc.OracleDriver"
+  val username = "hr"
+  val password = "123"
+  val connection = connectToDatabase(url, username, password)
+
+
+  def connectToDatabase(url: String, username: String, password: String): Connection = {
+    Class.forName("oracle.jdbc.driver.OracleDriver") // Load Oracle JDBC driver class
+    DriverManager.getConnection(url, username, password) // Create connection
+  }
+
+
+  def insertData(connection: Connection, discount: Float, finalPrice: Float): Unit = {
+    val query = "INSERT INTO discount (discount, finalprice) VALUES (?, ?)" // Replace with your table name
+    val preparedStatement: PreparedStatement = connection.prepareStatement(query)
+    preparedStatement.setFloat(1, discount)
+    preparedStatement.setFloat(2, finalPrice)
+    preparedStatement.executeUpdate()
+    preparedStatement.close()
+  }
+  finalList.foreach { row =>
+    val discount = row(0)
+    val finalPrice = row(1)
+    insertData(connection, discount, finalPrice)
+  }
+  connection.close()
+
+  }
+
+
 
